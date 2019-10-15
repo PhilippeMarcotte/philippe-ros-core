@@ -31,16 +31,15 @@
 		<!-- <remap from="pure_pursuit_node/lane_pose_obstacle_avoidance" to="lane_filter_node/lane_pose_obstacle_avoidance"/> TODO: add correct node_name
 		<remap from="pure_pursuit_node/lane_pose_parking" to="lane_filter_node/lane_pose_parking"/>
 		<remap from="pure_pursuit_node/implicit_coordination_velocity" to="lane_filter_node/implicit_coordination_velocity"/> -->
-		<remap from="pure_pursuit_node/wheels_cmd_executed" to="wheels_driver_node/wheels_cmd_executed" />
+		<!--<remap from="pure_pursuit_node/wheels_cmd_executed" to="wheels_driver_node/wheels_cmd_executed" />-->
 		<remap from="pure_pursuit_node/fsm_mode" to="fsm_node/mode" />
-		<remap from="pure_pursuit_node/obstacle_avoidance_pose" to="obst_avoid/obstacle_avoidance_pose" />
+		<!--<remap from="pure_pursuit_node/obstacle_avoidance_pose" to="obst_avoid/obstacle_avoidance_pose" />
 		<remap from="pure_pursuit_node/obstacle_detected" to="obstacle_avoidance_node/obstacle_avoidance_active_flag" />
-		<remap from="pure_pursuit_node/stop_line_reading" to="stop_line_filter_node/stop_line_reading" />
+		<remap from="pure_pursuit_node/stop_line_reading" to="stop_line_filter_node/stop_line_reading" />-->
 		<remap from="wheels_driver_node/radius_limit" to="pure_pursuit_node/radius_limit" />
-		<remap from="vehicle_avoidance_control_node/car_cmd" to="pure_pursuit_node/car_cmd" />
-		<remap from="vehicle_avoidance_control_node/car_cmd_in" to="pure_pursuit_node/car_cmd"/>
-		<node  pkg="$(arg pkg_name)" type="$(arg node_name).py" name="$(arg node_name)" output="screen" required="true">
-			<rosparam command="load" file="$(find pure_pursuit)/config/$(arg node_name)/$(arg param_file_name).yaml"/>
+		<!--<remap from="vehicle_avoidance_control_node/car_cmd" to="pure_pursuit_node/car_cmd" />
+		<remap from="vehicle_avoidance_control_node/car_cmd_in" to="pure_pursuit_node/car_cmd"/>-->
+		<node  pkg="$(arg pkg_name)" type="$(arg node_name)_slim.py" name="$(arg node_name)" output="screen" required="true">
 	    </node>
 	</group>
 </launch>

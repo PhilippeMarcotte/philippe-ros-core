@@ -409,7 +409,7 @@ class pure_pursuit(object):
         car_control_msg = Twist2DStamped()
         car_control_msg.header = pose_msg.header
 
-        car_control_msg.v = 0.5
+        car_control_msg.v = pose_msg.v_ref
         car_control_msg.omega = 0.
 
         if self.segments:
@@ -417,11 +417,9 @@ class pure_pursuit(object):
             total_yellow = np.array([0., 0.])
             n_white = 0
             n_yellow = 0
-            self.loginfo("n segment: %i" % len(self.segments.segments))
             for segment in self.segments.segments:
                 total_segment = np.array([(segment.points[0].x + segment.points[1].x), 
                                         (segment.points[0].y + segment.points[1].y)])
-                self.loginfo("segment: %f, %f, %f" % (segment.points[0].x, segment.points[0].y, segment.points[0].z))
                 if segment.color == segment.WHITE:
                     total_white += total_segment
                     n_white += 1
@@ -432,11 +430,10 @@ class pure_pursuit(object):
             n_white = max(1, n_white)      
             n_yellow = max(1, n_yellow)
 
-            ave_white = total_white / n_white
-            ave_yellow = total_yellow / n_yellow
+            ave_white = total_white * 1. / n_white
+            ave_yellow = total_yellow * 1. / n_yellow
 
             follow_point = 0.5 * (ave_white + ave_yellow)
-            self.loginfo("follow point: %f, %f" % (follow_point[0], follow_point[1]))
 
             heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
 
@@ -444,16 +441,14 @@ class pure_pursuit(object):
 
             sin_phi = np.cross(follow_point, heading) / ((distance * np.linalg.norm(heading) + np.exp(-6)))
 
-            cos_phi = np.dot(follow_point, heading) / (distance * np.linalg.norm(heading))
+            cos_phi = np.dot(follow_point, heading) / ((distance * np.linalg.norm(heading) + np.exp(-6)))
 
             if sin_phi >= 0:
                 angle = np.arccos(cos_phi)
             else:
                 angle = 2*np.pi - np.arccos(cos_phi)
 
-            self.loginfo("angle: %f" % angle)
-
-            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / distance
+            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
         
         self.publishCmd(car_control_msg)
         currentMillis = int(round(time.time() * 1000))

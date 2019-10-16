@@ -115,7 +115,7 @@ class pure_pursuit(object):
             if n_white == 0:
                 follow_point[1] += 0.10
             elif n_yellow == 0:
-                follow_point[1] -= 0.25
+                follow_point[1] -= 0.20
 
             # heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
 
@@ -131,7 +131,7 @@ class pure_pursuit(object):
             #     angle = (2 * np.pi) - np.arccos(cos_phi)
             
             angle = np.arctan2(follow_point[1], follow_point[0])
-            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
+            car_control_msg.omega = -3 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
         self.publishCmd(car_control_msg)
 
 if __name__ == "__main__":

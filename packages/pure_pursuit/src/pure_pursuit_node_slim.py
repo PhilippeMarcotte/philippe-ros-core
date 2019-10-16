@@ -113,9 +113,9 @@ class pure_pursuit(object):
             follow_point = 0.5 * (ave_white + ave_yellow)
 
             if n_white == 0:
-                follow_point[1] += 0.20
+                follow_point[1] += 0.1
             elif n_yellow == 0:
-                follow_point[1] -= 0.15
+                follow_point[1] -= 0.1
 
             # heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
 

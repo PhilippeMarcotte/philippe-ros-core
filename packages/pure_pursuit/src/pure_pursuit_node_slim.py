@@ -55,8 +55,7 @@ class pure_pursuit(object):
             self.segments = input_seg_msg
 
     def PoseHandling(self, input_pose_msg, pose_source):
-        if self.fsm_state == "LANE_FOLLOWING":
-            self.updatePose(input_pose_msg)
+        self.updatePose(input_pose_msg)
 
     def custom_shutdown(self):
         rospy.loginfo("[%s] Shutting down..." % self.node_name)
@@ -132,8 +131,7 @@ class pure_pursuit(object):
             #     angle = (2 * np.pi) - np.arccos(cos_phi)
             
             angle = np.arctan2(follow_point[1], follow_point[0])
-            car_control_msg.omega = 2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
-        self.loginfo("v: %f, omega: %f" % (car_control_msg.v, car_control_msg.omega))
+            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
         self.publishCmd(car_control_msg)
 
 if __name__ == "__main__":

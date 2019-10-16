@@ -87,7 +87,7 @@ class pure_pursuit(object):
         car_control_msg = Twist2DStamped()
         car_control_msg.header = pose_msg.header
 
-        car_control_msg.v = 0.3
+        car_control_msg.v = 0.2
         car_control_msg.omega = 0.
 
         if self.segments:
@@ -113,7 +113,7 @@ class pure_pursuit(object):
             follow_point = 0.5 * (ave_white + ave_yellow)
 
             if n_white == 0:
-                follow_point[1] += 0.25
+                follow_point[1] += 0.20
             elif n_yellow == 0:
                 follow_point[1] -= 0.15
 

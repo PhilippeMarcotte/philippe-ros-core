@@ -96,26 +96,27 @@ class pure_pursuit(object):
             n_white = 0
             n_yellow = 0
             for segment in self.segments.segments:
-                centroid = np.array([(segment.points[1].x + segment.points[0].x) / 2, 
-                                        (segment.points[1].y + segment.points[0].y) / 2])
+                centroid = np.array([(segment.points[1].x + segment.points[0].x), 
+                                        (segment.points[1].y + segment.points[0].y)])
                 #weight = 1 / (1 + np.abs(np.linalg.norm(centroid) - self.L) ** 2)
                 #centroid = weight * centroid
                 if segment.color == segment.WHITE:
                     total_white += centroid
-                    n_white += 1
+                    n_white += 2
                 elif segment.color == segment.YELLOW:
                     total_yellow += centroid
-                    n_yellow += 1
+                    n_yellow += 2
 
             ave_white = total_white * 1. / max(1, n_white)
             ave_yellow = total_yellow * 1. / max(1, n_yellow)
 
-            follow_point = 0.5 * (ave_white + ave_yellow)
-
-            if n_white == 0:
-                follow_point[1] += 0.1
-            elif n_yellow == 0:
-                follow_point[1] -= 0.1
+            if n_white > n_yellow:
+                follow_point = ave_white
+                follow_point[1] -= 0.15
+            else:
+                follow_point = ave_yellow
+                follow_point[1] += 0.15
+            
 
             # heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
 
@@ -131,7 +132,7 @@ class pure_pursuit(object):
             #     angle = (2 * np.pi) - np.arccos(cos_phi)
             
             angle = np.arctan2(follow_point[1], follow_point[0])
-            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
+            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / ((distance + np.exp(-6)))
         self.publishCmd(car_control_msg)
 
 if __name__ == "__main__":

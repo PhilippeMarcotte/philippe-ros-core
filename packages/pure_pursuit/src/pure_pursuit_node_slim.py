@@ -16,6 +16,7 @@ class pure_pursuit(object):
         self.last_ms = None
         self.pub_counter = 0
         self.actuator_limits = None
+        self.L = 0.1
 
         # Publication
         self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
@@ -94,7 +95,7 @@ class pure_pursuit(object):
         car_control_msg = Twist2DStamped()
         car_control_msg.header = pose_msg.header
 
-        car_control_msg.v = 0.5
+        car_control_msg.v = 0.05
         car_control_msg.omega = 0.
 
         if self.segments:
@@ -103,37 +104,42 @@ class pure_pursuit(object):
             n_white = 0
             n_yellow = 0
             for segment in self.segments.segments:
-                total_segment = np.array([(segment.points[1].x + segment.points[0].x), 
-                                        (segment.points[1].y + segment.points[0].y)])
+                centroid = np.array([(segment.points[1].x + segment.points[0].x) / 2, 
+                                        (segment.points[1].y + segment.points[0].y) / 2])
+                weight = 1 / (1 + np.abs(np.linalg.norm(centroid) - self.L) ** 2)
+                centroid = weight * centroid
                 if segment.color == segment.WHITE:
-                    total_white += total_segment
+                    total_white += centroid
                     n_white += 1
                 elif segment.color == segment.YELLOW:
-                    total_yellow += total_segment
+                    total_yellow += centroid
                     n_yellow += 1
 
-            n_white = max(1, n_white)
-            n_yellow = max(1, n_yellow)
-
-            ave_white = total_white * 1. / n_white
-            ave_yellow = total_yellow * 1. / n_yellow
+            ave_white = total_white * 1. / max(1, n_white)
+            ave_yellow = total_yellow * 1. / max(1, n_yellow)
 
             follow_point = 0.5 * (ave_white + ave_yellow)
 
-            heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
+            if n_white == 0:
+                follow_point[1] += 0.15
+            elif n_yellow == 0:
+                follow_point[1] -= 0.15
+
+            # heading = np.array([np.cos(self.lane_reading.phi), np.sin(self.lane_reading.phi)])
 
             distance = np.linalg.norm(follow_point)
 
-            sin_phi = np.cross(follow_point, heading) / ((distance * np.linalg.norm(heading)) + np.exp(-6))
+            # sin_phi = np.cross(follow_point, heading) / ((distance * np.linalg.norm(heading)) + np.exp(-6))
 
-            cos_phi = np.dot(follow_point, heading) / ((distance * np.linalg.norm(heading)) + np.exp(-6))
+            # cos_phi = np.dot(follow_point, heading) / ((distance * np.linalg.norm(heading)) + np.exp(-6))
 
-            if sin_phi >= 0:
-                angle = np.arccos(cos_phi)
-            else:
-                angle = (2 * np.pi) - np.arccos(cos_phi)
-
-            car_control_msg.omega = -2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
+            # if sin_phi >= 0:
+            #     angle = np.arccos(cos_phi)
+            # else:
+            #     angle = (2 * np.pi) - np.arccos(cos_phi)
+            
+            angle = np.arctan2(follow_point[1], follow_point[0])
+            car_control_msg.omega = 2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
         
         self.publishCmd(car_control_msg)
         currentMillis = int(round(time.time() * 1000))

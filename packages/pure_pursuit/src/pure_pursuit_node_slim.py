@@ -13,7 +13,7 @@ class pure_pursuit(object):
         self.node_name = rospy.get_name()
         self.lane_reading = None
         self.segments = None
-        self.last_ms = None
+        self.start = time.time()
         self.pub_counter = 0
         self.actuator_limits = None
         self.L = 0.1
@@ -132,6 +132,8 @@ class pure_pursuit(object):
             
             angle = np.arctan2(follow_point[1], follow_point[0])
             car_control_msg.omega = -3 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
+
+        rospy.loginfo("DATA\t%f\t%f\t%f" % (pose_msg.d, pose_msg.phi, time.time()-self.start))
         self.publishCmd(car_control_msg)
 
 if __name__ == "__main__":

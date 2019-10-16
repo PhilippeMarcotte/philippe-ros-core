@@ -27,6 +27,7 @@
 		<remap from="car_cmd_switch_node/cmd_lane_following" to="pure_pursuit_node/lane_control"/>
 		<remap from="pure_pursuit_node/lane_pose" to="lane_filter_node/lane_pose"/>
 		<remap from="pure_pursuit_node/seglist_filtered" to="lane_filter_node/seglist_filtered"/>
+		<remap from="pure_pursuit_node/car_cmd" to="joy_mapper_node/car_cmd"/>
 		<!--NO!!! <remap from="fsm_node/mode" to="fsm_node/lane_pose_intersection_navigation"/> --><!--TODO what is this -->
 		<!-- <remap from="pure_pursuit_node/lane_pose_obstacle_avoidance" to="lane_filter_node/lane_pose_obstacle_avoidance"/> TODO: add correct node_name
 		<remap from="pure_pursuit_node/lane_pose_parking" to="lane_filter_node/lane_pose_parking"/>

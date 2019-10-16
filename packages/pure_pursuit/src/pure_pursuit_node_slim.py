@@ -87,7 +87,7 @@ class pure_pursuit(object):
         car_control_msg = Twist2DStamped()
         car_control_msg.header = pose_msg.header
 
-        car_control_msg.v = 0.1
+        car_control_msg.v = 0.3
         car_control_msg.omega = 0.
 
         if self.segments:
@@ -98,8 +98,8 @@ class pure_pursuit(object):
             for segment in self.segments.segments:
                 centroid = np.array([(segment.points[1].x + segment.points[0].x) / 2, 
                                         (segment.points[1].y + segment.points[0].y) / 2])
-                weight = 1 / (1 + np.abs(np.linalg.norm(centroid) - self.L) ** 2)
-                centroid = weight * centroid
+                #weight = 1 / (1 + np.abs(np.linalg.norm(centroid) - self.L) ** 2)
+                #centroid = weight * centroid
                 if segment.color == segment.WHITE:
                     total_white += centroid
                     n_white += 1
@@ -113,7 +113,7 @@ class pure_pursuit(object):
             follow_point = 0.5 * (ave_white + ave_yellow)
 
             if n_white == 0:
-                follow_point[1] += 0.15
+                follow_point[1] += 0.25
             elif n_yellow == 0:
                 follow_point[1] -= 0.15
 

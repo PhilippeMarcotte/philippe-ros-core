@@ -55,8 +55,8 @@ class pure_pursuit(object):
             self.segments = input_seg_msg
 
     def PoseHandling(self, input_pose_msg, pose_source):
-        if self.fsm_state == "LANE_FOLLOWING":
-            self.updatePose(input_pose_msg)
+        # if self.fsm_state == "LANE_FOLLOWING":
+        self.updatePose(input_pose_msg)
 
     def custom_shutdown(self):
         rospy.loginfo("[%s] Shutting down..." % self.node_name)

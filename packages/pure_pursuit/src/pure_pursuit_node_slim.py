@@ -85,13 +85,6 @@ class pure_pursuit(object):
     def updatePose(self, pose_msg):
         self.lane_reading = pose_msg
 
-        # Calculating the delay image processing took
-        timestamp_now = rospy.Time.now()
-        image_delay_stamp = timestamp_now - self.lane_reading.header.stamp
-
-        # delay from taking the image until now in seconds
-        image_delay = image_delay_stamp.secs + image_delay_stamp.nsecs / 1e9
-
         car_control_msg = Twist2DStamped()
         car_control_msg.header = pose_msg.header
 
@@ -140,10 +133,8 @@ class pure_pursuit(object):
             
             angle = np.arctan2(follow_point[1], follow_point[0])
             car_control_msg.omega = 2 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
-        
+        self.loginfo("v: %f, omega: %f" % (car_control_msg.v, car_control_msg.omega))
         self.publishCmd(car_control_msg)
-        currentMillis = int(round(time.time() * 1000))
-        self.last_ms = currentMillis
 
 if __name__ == "__main__":
     rospy.init_node("pure_pursuit_node", anonymous=False)

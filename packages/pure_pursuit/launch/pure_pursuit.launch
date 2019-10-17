@@ -40,7 +40,7 @@
 		<remap from="wheels_driver_node/radius_limit" to="pure_pursuit_node/radius_limit" />
 		<!--<remap from="vehicle_avoidance_control_node/car_cmd" to="pure_pursuit_node/car_cmd" />
 		<remap from="vehicle_avoidance_control_node/car_cmd_in" to="pure_pursuit_node/car_cmd"/>-->
-		<node  pkg="$(arg pkg_name)" type="$(arg node_name)_slim.py" name="$(arg node_name)" output="screen" required="true">
+		<node  pkg="$(arg pkg_name)" type="$(arg node_name).py" name="$(arg node_name)" output="screen" required="true">
 	    </node>
 	</group>
 </launch>

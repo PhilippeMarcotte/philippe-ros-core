@@ -131,9 +131,9 @@ class pure_pursuit(object):
             #     angle = (2 * np.pi) - np.arccos(cos_phi)
             
             angle = np.arctan2(follow_point[1], follow_point[0])
-            car_control_msg.omega = -3 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
+            car_control_msg.omega = -2.5 * car_control_msg.v * np.sin(angle) / (distance + np.exp(-6))
 
-        rospy.loginfo("DATA\t%f\t%f\t%f" % (pose_msg.d, pose_msg.phi, time.time()-self.start))
+        rospy.loginfo("DATA\t%f\t%f\t%f\t%f\t%f" % (car_control_msg.v, car_control_msg.omega, pose_msg.d, pose_msg.phi, time.time()-self.start))
         self.publishCmd(car_control_msg)
 
 if __name__ == "__main__":
